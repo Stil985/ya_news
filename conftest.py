@@ -1,4 +1,8 @@
 import pytest
+from datetime import datetime, timedelta
+
+from django.conf import settings
+from django.utils import timezone
 
 from news.models import News, Comment
 
@@ -36,3 +40,30 @@ def id_for_news(news):
 @pytest.fixture
 def id_for_comment(comment):
     return comment.pk,
+
+
+@pytest.fixture
+def some_news():
+    today = datetime.today()
+    return News.objects.bulk_create([
+        News(
+            title=f'Заголовок {i}',
+            text=f'Текст {i}',
+            date=today - timedelta(days=i)
+        )
+        for i in range(settings.NEWS_COUNT_ON_HOME_PAGE + 1)
+    ])
+
+
+@pytest.fixture
+def some_comments(news, author):
+    now = timezone.now()
+    return Comment.objects.bulk_create([
+        Comment(
+            news=news,
+            author=author,
+            text=f'Текст комментария {i}',
+            created=now - timedelta(days=i)
+        )
+        for i in range(2)
+    ])
