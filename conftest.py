@@ -4,6 +4,7 @@ from datetime import datetime, timedelta
 from django.conf import settings
 from django.utils import timezone
 
+from news.forms import BAD_WORDS
 from news.models import News, Comment
 
 
@@ -67,3 +68,17 @@ def some_comments(news, author):
         )
         for i in range(2)
     ])
+
+
+@pytest.fixture
+def form_data():
+    return {
+        'text': 'Текст комментария 2',
+    }
+
+
+@pytest.fixture
+def bad_form_data():
+    return {
+        'text': ' '.join(BAD_WORDS),
+    }
